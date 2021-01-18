@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Teste de uso do Template EJS </title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+  </head>
+  <body>
+    <h1> Teste do uso do template EJS </h1>
+    <h2> O parágrafo abaixo foi passado para esse template na variável "teste". </h2>
+    <div class="container">
+      
+      <!-- 
+          Com o EJS é preprocessado todo script entre as marcações '%', 
+          de forma semelhante ao que é feito em outros scritps de servidor. 
+
+          No caso abaixo, o valor de teste substitui a região marcada 
+          pelo valor da variável teste, usada nas rotas 3 e 4 do arquivo 
+          server.js (passadas como estruturas do JS)
+      -->
+      <p><%= teste %></p>
+    </div>
+  </body>
+</html>

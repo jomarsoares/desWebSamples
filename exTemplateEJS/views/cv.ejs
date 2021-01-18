@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<!--  
+		  Com o EJS é preprocessado todo script entre as marcações entre '%', 
+		  de forma semelhante ao que é feito em outros scritps de servidor. 
+
+		  No caso abaixo, userName é substituído pelo seu valor, conforme
+		  encontrado na estrutura passada para cv.ejs na rota 4 do arquivo 
+		  server.js 
+
+      -->
+    <title><%= userName %> </title>
+    <link rel="stylesheet" type="text/css" href="/css/tst2.css">
+  </head>
+  <body>
+    <div class="ch1">
+		<h1> Seção 1 </h1> 
+
+		<!-- 
+		  O preprocessamento das entradas de script abaixo irão gerar 
+		  parágrafos na "Seção 1" e marcadores na "Seção 2" com as linhas 
+		  que tiverem sido carregadas, respectivamente, dos arquivos s1.txt 
+		  e s2.txt, do diretório data/fulano, e inseridas na estrtura dadosCV,
+		  enviada para cv.ejs (ver 4a rota em server.js)
+      	-->
+		<% for (var i=0; i<linesSec1.length; i++) {%>
+		<p> <%= linesSec1[i] %> </p>
+		<% } %>
+
+		<h1> Seção 2 </h1> 
+		<ul>
+		<% for (var i=0; i<linesSec2.length; i++) {%>
+		<li> <%= linesSec2[i] %> </li>
+		<% } %>
+		</ul>
+
+	</div>
+  </body>
+</html>

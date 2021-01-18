@@ -1,0 +1,8 @@
+
+{ 
+    "nome" : "teste",
+    "lista" : 
+    [
+        "tst1", "tst2", "tst3"
+    ]
+}

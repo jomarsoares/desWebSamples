@@ -1,0 +1,217 @@
+<!-- 
+	==============================================================
+	Código exemplo comentado  
+
+	Alteração do DOM por meio de JS cliente 
+
+	Este pequeno exemplo utiliza JavaScript no cliente e no 
+	servidor. 
+	
+	No lado cliente, há dois exemplos para carregar 
+	conteúdo por meio de requisições HTTP assíncronas 
+	alternativas: um é baseado no uso do objeto XMLHttpRequest;
+	o outro usa a função fetch. 
+	
+	No lado servidor, é implementado em NodeJS um servidor HTTP 
+	simples que lê um arquivo (no próprio servidor) e o 
+	carrega no corpo da resposta HTTP.    
+
+	O código está comentado detalhadamente.
+
+	Para executar o exemplo, é preciso ter o NodeJS 
+	no computador. 
+	==============================================================
+-->
+
+
+<!-- 
+	DOCTYE que determina a codificação em HTML5
+-->
+<!DOCTYPE html>
+
+<!-- 
+
+	O documento HTML é delimitado pelas tags <html></html>
+
+-->
+<html>
+
+<!-- 
+
+	As metainformações do documento HTML são colocadas na seção 
+	de cabeçalho do documento, delimitado pelas tags <head.</head>
+
+-->
+<head>
+	<meta charset="utf-8">
+	<title>Carga de conteúdo via JS</title>
+	
+	<!-- 
+
+		Requisição HTTP (método GET) para carregar a folha de estilo a ser aplicada.
+		A folha de estilo encontra-se no mesmo codebase a partir do qual este 
+		documento html foi carregado, mas na pasta "css"
+
+		O arquivo com a folha de estilo a ser carregado é denominado tst2.css
+
+	-->
+	<link id="style" rel="stylesheet" type="text/css" href="css/tst2.css">
+</head>
+
+<body>
+	<h1> Conteúdo carregado via JS USANDO AJAX</h1>
+	
+	<h2>Com XMLHttpRequest fazendo um split com o caracter # !</h2>
+
+	<!-- 
+
+	Neste exemplo, o texto de cada div serã substituído pelos dados que 
+	serão carregados de arquivos do servidor e formatados por scripts 
+	que estão contidos neste mesmo código.  
+
+	Notem que as tags <div> possuem identificadores (demo1 e demo2)
+
+	Esses identificadores são importantes para que se possa modificar o 
+	conteúdo da tag por meio do JavaScript (innerHTML) 
+
+	-->
+	<div id="demo1"></div>
+
+	<h2>Usando fetch e dados no formato JSON !</h2>
+	<div id="demo2"></div>
+
+	<!--
+		
+		As tags <script></script> informam ao nagegador que o conteúdo 
+		apresentado entre as mesmas deve ser interpretado de maneira
+		apropriada, e NÃO estão codificados em html. 
+	
+		No código abaixo temos 3 funções: a primeira responsável pela 
+		formatação das informações que substituirão o conteúdo das 
+		tags <div> acima codificadas; as duas funções consecutivas 
+		realizam requisções assíncronas (sem a interferências do 
+		usuário) ao servidor para obter informações específicas. 
+	-->
+
+	<script>
+
+		/*
+			Obs. inicial: 
+			Note que o comentário foi inserido aqui de maneira diferente,
+			pois o código está sujeito a um interpretador diferente do
+			que trata o código html. 
+
+			
+			A função arrToOl realiza a transformação de um array de 
+			strings (recebido no parâmetro "response", em uma string que
+			é formatada com código html. Nesse caso, cada trecho da string
+			original, que é separado por caracteres "#", é colocado em uma 
+			lista ordenada.
+		*/
+		function arrToOl(response){
+		  var arr = response.split("#");
+		  str = "<ol>"
+		  console.log("tam de arr "+arr.length);
+		  for (i=0; i < arr.length; i++)
+			 str += "<li>" + arr[i] + "</li>";
+		  str+="</ol>"
+		  return str;  
+		}
+
+		/* 	
+			A função loadDocTxt realiza uma requisição (GET) para o a url
+			identificada com o parâmetro "url" a fim de retornar o recurso 
+			idendificado no parâmetro "id". 
+
+			Esta requisição é assíncrona e baseada no conceito de AJAX, 
+			portanto, realizada usando o objeto XMLHttpRequest. 
+
+			O texto retornado, no caso deste exeplo, é uma string, 
+			razão pela qual a resposta, caso o retorno HTTP seja 
+			uma mensagem 200 OK, indicando que o recurso solicitado 
+			foi encontrado. A requisição é assíncrona, o que quer dizer
+			que o processo não fica bloqueado aguardando o retorno 
+			da requisição.   
+			
+			A função anônima atribuída à propriedade onreadystatechange
+			é executada apenas quando a resposta é recebida pelo 
+			navegador (quando o estado "ready" muda "change"). 
+			A verificação do código de retorno é realizada antes de 
+			submeter o texto recebido à formatação pela função
+			arrToOl (apresentada acima). 
+
+		*/
+		function loadDocTxt(url,id) {
+		  var xhttp = new XMLHttpRequest();
+		  xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+			  console.log(this.responseText);		
+			  document.getElementById(id).innerHTML = arrToOl(this.responseText);
+			}
+		  };
+		  xhttp.open("GET", url, true);
+		  xhttp.send();
+		}
+
+
+		/*
+			A função loadDocJSON tem o mesmo propósito da aprentada anteriormente, 
+			mas utilizando outra técnica para chamadas assíncronas, por meio da 
+			função fetch().
+			
+			O efeito prático é o mesmo, mas o código fica um pouco mais enxuto.
+
+			Note que a função de callback, chamada assíncronamente, 
+			usa uma sintaxe diferente da usada na função loadDocTxt.
+			Anterior 
+				funcion () {...}
+			Neste caso
+				(data) => {...}, em que "data" recebe o corpo da 
+				resposta à requisição, no caso de sucesso.
+			
+			A função anônima chamada no caso de err apresenta
+			apenas uma mensagem na console do navgador.
+			
+		*/
+
+		function loadDocJSON(url, id) {
+			fetch(url)
+  			.then(response => {
+    			response.json().then( (data) => {
+					document.getElementById(id).innerHTML = arrToOl2(data);  
+   			 	});
+  			}).catch(err => {
+    			console.error('Failed retrieving information', err);
+  			});
+		}
+
+		/*
+			Diferentemente da função arrToOl, a função arrToOl2 
+			recebe o parâmetro no formato de uma estrutura JS, 
+			visto que os dados estavam codificados no formato 
+			JSON no servidor. A formatação em firna de uma lista 
+			ordenada é realizada de maneira semelhande ao que 
+			faz a função arrToOl. 
+
+		*/
+		function arrToOl2(response){
+		  	lista = response.lista;
+		  	console.log("tam de arr JSON: "+ lista.length);
+		 
+		  	str = "<h3>"+response.nome+"</h3> <ol>";
+		  	for (i=0; i < lista.length; i++)
+		   		str += "<li>" + lista[i] + "</li>";
+		  	str+="</ol>";
+		  	return str;  
+		}
+
+		/*
+			As duas últimas linhas do script realizam a chamada
+			síncrona às funções loadDocTxt e loadDocJSON, e
+			explicadas anteriormente.
+		*/
+		loadDocTxt("data/doc.txt","demo1");
+		loadDocJSON("data/doc.json","demo2");
+	</script>
+</body>
+</html>

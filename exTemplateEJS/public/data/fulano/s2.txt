@@ -1,0 +1,2 @@
+linha de s2.txt
+outra linha de s2.txt

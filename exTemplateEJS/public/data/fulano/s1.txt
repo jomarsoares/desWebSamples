@@ -1,0 +1,6 @@
+linha de s1.txt
+outra linha de s1.txt
+e mais uma linha
+e mais uma outra linha
+e essa coisa não para
+...
